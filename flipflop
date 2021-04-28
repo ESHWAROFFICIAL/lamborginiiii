@@ -1,0 +1,323 @@
+<!-- Flip-Flop html v1.1.0 -->
+<div id="screenBack">
+    <div id="screen">
+      <div id="menu">
+          <div id="winScreen" class="menulvl3"> CONGRATULATIONS <br/> YOU WIN!!!<br/></div>
+          <div id="newgame" class="menulvl1 menulvl3">NEW GAME</div>
+          <div id="settings" class="menulvl1">SETTINGS</div>
+          <div id="help" class="menulvl1">HELP</div>
+          <div id="startScreen" class="menulvl2">CHOOSE A SIZE OF GRID:
+            <p id="size" class="goodlighted">   
+              <input type="radio" name="dif" id="d_2">
+                <label for="d_2"> 2 X 2 </label>
+              <input type="radio" name="dif" id="d_4">
+                <label for="d_4"> 4 X 4 </label>
+              <input type="radio" name="dif" id="d_8">
+                <label for="d_8"> 8 X 8 </label>
+              <input type="radio" name="dif" id="d_16">
+                <label for="d_16"> 16 X 16 </label>
+            </p>  
+          </div>
+          <div id="startGame" class="menulvl2">START GAME</div>
+      </div>
+    </div>
+<div id="wrapper" class="game" style="width: 300px; margin: 0px auto;">
+  <div id="lamps" class="game"></div>
+  <div id="field" class="game"></div>
+</div>
+</div>
+
+
+
+html
+
+
+/* Flip-Flop css v1.0.0 */
+
+html, body{
+ margin: 0px;
+ padding: 0px;
+ height: 100%;
+ width: 100%;  
+ background: rgba(200,200,200,0.7); 
+}
+
+#lamps{  
+  height: 64px;
+  width: 304px;
+}
+#lamps .on { background: #EA8B1D;}
+.lamp{  
+  height: 64px;
+  width: 64px;
+  background: #405162;
+  float: right;  
+  border-radius: 10px;
+  margin: 1px;
+  border: solid 1px rgba(255,255,255,0.7);
+}
+#field{
+  width: 304px;  
+}
+#field .on { background: #3FB8AF;}
+#field .off{ background: #FF3D7F;}
+.cord{  
+  height: 64px;
+  width: 64px;
+  background: black;
+  float: right;
+  border-radius: 10px;
+  margin: 1px;
+  border: solid 1px rgba(255,255,255,0.7);  
+}
+
+#menu{    
+  background: #79BD9A;
+  background-origin: padding-box;
+  background-clip: padding-box;
+  color: #3B8686;
+  font: 39px "Segoe UI";
+  font-weight: bold;
+  text-align: center;
+  border-top: solid rgba(0,0,0,0) 100px;
+  margin: 0px auto;  
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  padding: 10px;
+}
+.secondMenu{}
+#newgame, #settings, #help, #startGame{    
+  background: rgba(207, 240, 158, 0.2);  
+  border-radius: 10px;   
+  width : 270px;
+  margin: 7px auto;  
+  padding: 0 0 2px 0;
+}
+#newgame:hover, #settings:hover, #help:hover, #startGame:hover{    
+  background: rgba(207, 240, 158, 0.3); 
+  color: #0B486B;
+  cursor: pointer;
+
+}
+#size{  
+  font: bold 25px "Segoe UI";
+  margin: 5px auto 25px;
+  width : 325px;
+  padding: 3px 0 6px 0;
+  border-radius: 10px;
+}
+.goodlighted{
+  background: #A8DBA8; 
+}
+.redlighted{  
+  background: #FF3D7F;
+}
+input[type="radio"] { 
+    position: absolute; left: -999em; 
+}
+label{  
+ border-right: 1px solid rgba(0, 0, 0, 0.1);
+ box-shadow: 1px 0 0 rgba(255, 255, 255, 0.11); 
+}
+label:last-child{  
+ border-right: none;
+ box-shadow: none; 
+}
+#d_2, #d_4, #d_8, #d_16{
+  margin: 0px;
+  padding: 0px; 
+}
+#d_2 + label, #d_4 + label, #d_8 + label{
+  padding: 0 0 3px 6px;  
+}
+#d_16 + label{ padding: 0 6px 3px 6px;}
+#d_2 + label:hover, #d_4 + label:hover,
+#d_8 + label:hover, #d_16 + label:hover{
+  color: #0B486B;  
+  cursor: pointer;
+}
+#d_2:checked + label, #d_4:checked + label,
+#d_8:checked + label, #d_16:checked + label{
+  background: #132729;
+  border-radius: 5px;
+}
+#winScreen{
+  color: #3B8686;
+  font: 39px Impact;
+  text-align: center;
+}
+.menulvl2, .menulvl3{display: none;}
+.menulvl1 {display: block;}
+.game{ display: none;}
+.pro{ height: 10px; width: 10px; border-radius: 10px; background: #F6A71A; margin: 5px; float: left;} 
+
+
+css
+
+
+
+/* Flip-Flop js v1.2.0 */
+
+$(document).ready(function (){ 
+  
+  const settings = { 
+    two : {
+      size : 2, 
+      squareSize : 128,
+      gridWidth: 264
+    },
+    four : {
+      size : 4,  
+      squareSize : 64,
+      gridWidth: 304
+    },
+    eight : {
+      size : 8,  
+      squareSize : 48,
+      gridWidth: 416
+    },
+    sixteen : {
+      size : 16,  
+      squareSize : 32,
+      gridWidth: 576
+    }
+  }  
+  var size = 0;
+  var release;
+  
+  function randomize(){
+    var flag = Math.floor(Math.random()+0.5);
+    $(this).toggleClass("on off", false);
+    if (flag == 1) {
+      $(this).addClass('on'); }else{
+      $(this).addClass('off');}
+  }
+  
+  function start(dimension){
+    if ( dimension == 2 ) { release = settings.two; }
+    else if ( dimension == 4 ) { release = settings.four; }
+    else if ( dimension == 8 ) { release = settings.eight; }
+    else if ( dimension == 16 ) { release = settings.sixteen; }
+    else {}
+    var grid = "";
+    var square = ""; 
+   for (i=1; i <= release.size; i++){
+   for (j=1; j <= release.size; j++){       
+      square = "<div class=\"cord row"+i+" col"+j+"\"></div>\n";
+      grid += square;
+    }}
+    $('#field').html(grid);    
+    grid = "";
+    square = ""; 
+    for (i=1; i <= release.size; i++){
+      square = "<div class=\"lamp col"+i+"\"></div>";
+      grid += square;
+    }
+    $('#lamps').html(grid);
+    $('#field').find('.cord').each(randomize);
+    $('#lamps').children('.lamp').toggleClass("on", false);   
+    $('#lamps').width(release.gridWidth);    
+    $('#field').width(release.gridWidth);
+    $('.lamp').width(release.squareSize);
+    $('.lamp').height(release.squareSize);     
+    $('.cord').width(release.squareSize);    
+    $('.cord').height(release.squareSize);
+    check();    
+  }
+  
+  $.fn.toggleStatus = function(){
+    var target = $(this).attr('class').split(" ");
+    $('#field').children("."+target[1]).toggleClass("on off");
+    $('#field').children("."+target[2]).toggleClass("on off");
+    $(this).toggleClass("on off");
+  }
+  
+  function win() {
+    blink();
+    setTimeout(function() {
+     clearTimeout(blinkTime);
+     $('.game').hide();
+     $('.menulvl3').show();    
+     $('#menu').fadeIn(300);     
+    }, 2000);
+  }
+  function blink() {
+      blinkTime = setTimeout(function() {
+        $('#lamps').children('.lamp').toggleClass("on");
+        blink();
+      },  100);      
+  }
+  
+  function check() {    
+    var flag = true;
+    for (i=1; i<release.size+1; i++){
+    var col = ".col"+i;
+    if (!$('#field').children(col).hasClass('off')) {
+      $('#lamps').children(col).toggleClass("on", true);  }else{
+      $('#lamps').children(col).toggleClass("on", false); 
+      flag = false; }
+    }
+    if (flag == true) { win(); }
+  }
+  
+  $('#field').on('click','.cord',function() {    
+    $(this).toggleStatus();
+    //$(this).append('<div class="pro"></div>');
+    check();
+  });  
+  
+  $('#newgame').on('click', function(){
+    $('#menu').children().fadeOut(300);
+    $('.menulvl2').delay(300).fadeIn(300);
+  });
+  
+  $('#startGame').on('click', function(){
+    for (i=1; i <= 4; i++){      
+     if ($('#d_'+ Math.pow(2, i)).prop("checked")){
+       size = Math.pow(2, i);
+      }       
+    }
+    if (size == 0) {
+      $('#size').toggleClass("redlighted", true);
+      $('#size').toggleClass("goodlighted", false);
+    }else{
+      $('#menu').fadeOut(300);
+      $('#menu').children().fadeOut(300);
+      start(size);            
+     $('.game').delay(300).fadeIn(600);
+    }
+  });
+  
+  $('label').on('click', function(){
+    $('#size').toggleClass("redlighted", false);
+    $('#size').toggleClass("goodlighted", true)
+  });
+  /*$('#screenBack').click(function() {
+    $('#screenBack').hide();
+    start();
+  });*/
+  
+  //var text  = "olol";
+  //text += "tytyty";
+  //grid = "trololo"
+  //i = 1; j = 2;
+  //square = "<div class=\"cord row"+i+" col"+j+"\"></div>\n";
+  //grid += square;
+  //$('#wrapper2').append(grid);
+
+  //start();
+  //$ new game
+  
+});  
+
+
+
+
+
+
+
+js
