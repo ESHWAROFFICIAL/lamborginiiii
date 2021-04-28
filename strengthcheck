@@ -1,0 +1,260 @@
+<h1>Password Strength Test</h1>
+<div class="strength-meter" id="strength-meter"></div>
+<input class="password-input" id="password-input" value="password" type="text" autofocus aria-laballedby="password">
+<div id="reasons" class="reasons"></div>
+
+      
+     
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+<!-- Side Links Only -->
+<div class="side-links">
+  <a href="https://youtu.be/jI4K7L-LI58" target="_blank" class="side-link side-link-youtube">
+    <i class="fab fa-youtube-square side-link-icon"></i>
+    <span class="side-link-text">View Tutorial</span>
+  </a>
+  <a href="https://github.com/WebDevSimplified" target="_blank" class="side-link side-link-github side-link-icon">
+    <i class="fab fa-github-square"></i>
+    <span class="side-link-text">View GitHub</span>
+  </a>
+  <a href="https://twitter.com/DevSimplified" target="_blank" class="side-link side-link-twitter">
+    <i class="fab fa-twitter-square side-link-icon"></i>
+    <span class="side-link-text">View Twitter</span>
+  </a>
+</div>
+
+
+
+html
+
+
+
+
+*::before, *::after, * {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: hsl(261, 88%, 17%);
+  color: hsl(261, 88%, 90%);
+  text-align: center;
+  max-width: calc(100% - 200px);
+}
+
+.strength-meter {
+  position: relative;
+  height: 2rem;
+  width: 90%;
+  border: 3px solid hsl(261, 88%, 57%);
+  border-radius: 1rem;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.strength-meter::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: calc(1% * var(--strength, 0));
+  background-color: hsl(261, 88%, 67%);
+
+  transition: width 200ms;
+}
+
+.password-input {
+  margin-top: 1rem;
+  width: 90%;
+  padding: .25rem .75rem;
+  background-color: hsl(261, 88%, 25%);
+  color: white;
+  border: 1px solid hsl(261, 88%, 57%);
+  outline: none;
+  text-align: center;
+  border-radius: .3rem;
+}
+
+.password-input:focus {
+  border-color: hsl(261, 88%, 70%);
+}
+
+.reasons > * {
+  margin-top: .5rem;
+  color: hsl(261, 88%, 80%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Background Styles Only */
+
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+* {
+    font-family: Raleway;
+}
+
+.side-links {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 10px;
+  color: white;
+  width: 180px;
+  padding: 10px 0;
+  border-radius: 10px;
+}
+
+.side-link-youtube {
+  background-color: red;
+}
+
+.side-link-twitter {
+  background-color: #1DA1F2;
+}
+
+.side-link-github {
+  background-color: #6e5494;
+}
+
+.side-link-text {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.side-link-icon {
+  color: white;
+  font-size: 30px;
+}
+
+
+
+css
+
+
+
+
+const strengthMeter = document.getElementById('strength-meter')
+const passwordInput = document.getElementById('password-input')
+const reasonsContainer = document.getElementById('reasons')
+
+passwordInput.addEventListener('input', updateStrengthMeter)
+updateStrengthMeter()
+
+function updateStrengthMeter() {
+  const weaknesses = calculatePasswordStrength(passwordInput.value)
+
+  let strength = 100
+  reasonsContainer.innerHTML = ''
+  weaknesses.forEach(weakness => {
+    if (weakness == null) return
+    strength -= weakness.deduction
+    const messageElement = document.createElement('div')
+    messageElement.innerText = weakness.message
+    reasonsContainer.appendChild(messageElement)
+  })
+  strengthMeter.style.setProperty('--strength', strength)
+}
+
+function calculatePasswordStrength(password) {
+  const weaknesses = []
+  weaknesses.push(lengthWeakness(password))
+  weaknesses.push(lowercaseWeakness(password))
+  weaknesses.push(uppercaseWeakness(password))
+  weaknesses.push(numberWeakness(password))
+  weaknesses.push(specialCharactersWeakness(password))
+  weaknesses.push(repeatCharactersWeakness(password))
+  return weaknesses
+}
+
+function lengthWeakness(password) {
+  const length = password.length
+
+  if (length <= 5) {
+    return {
+      message: 'Your password is too short',
+      deduction: 40
+    }
+  }
+
+  if (length <= 10) {
+    return {
+      message: 'Your password could be longer',
+      deduction: 15
+    }
+  }
+}
+
+function uppercaseWeakness(password) {
+  return characterTypeWeakness(password, /[A-Z]/g, 'uppercase characters')
+
+}
+
+function lowercaseWeakness(password) {
+  return characterTypeWeakness(password, /[a-z]/g, 'lowercase characters')
+}
+
+function numberWeakness(password) {
+  return characterTypeWeakness(password, /[0-9]/g, 'numbers')
+}
+
+function specialCharactersWeakness(password) {
+  return characterTypeWeakness(password, /[^0-9a-zA-Z\s]/g, 'special characters')
+}
+
+function characterTypeWeakness(password, regex, type) {
+  const matches = password.match(regex) || []
+
+  if (matches.length === 0) {
+    return {
+      message: `Your password has no ${type}`,
+      deduction: 20
+    }
+  }
+
+  if (matches.length <= 2) {
+    return {
+      message: `Your password could use more ${type}`,
+      deduction: 5
+    }
+  }
+}
+
+function repeatCharactersWeakness(password) {
+  const matches = password.match(/(.)\1/g) || []
+  if (matches.length > 0) {
+    return {
+      message: 'Your password has repeat characters',
+      deduction: matches.length * 10
+    }
+  }
+}
+
+
+
+js
