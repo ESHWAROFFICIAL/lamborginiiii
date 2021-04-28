@@ -1,0 +1,480 @@
+.controls
+  h2 Camera
+  a.view-top(onclick='drive.camera(this)') Top
+  a.view-side(onclick='drive.camera(this)') Side
+.base
+  #car
+    .car__base
+      .wall-container
+        .wall.wall--1
+          .tail-light
+          .tail-light
+        .wall.wall--2
+          .wheel.wheel--1
+          .wheel.wheel--2
+        .wall.wall--3
+          .head-light
+          .head-light
+        .wall.wall--4
+          .wheel.wheel--1
+          .wheel
+      .car-top
+        .hood
+          .front-shield
+            .roof
+              .rear-shield
+                .trunk
+  .track
+    .track__infield
+    
+
+
+
+html
+
+
+
+$baseBg: linear-gradient(#429C6B 50%, #429463 50%);
+$trackColor: #6F5664;
+$trackShadowColor: #444;
+$groundBg: #3D1803;
+ 
+// CAR
+$paintColor: #C81415;
+$tailLightColor: #F04C36;
+$headLightColor: #FFF;
+$windowColor: #B4DEDE;
+
+body {
+  background-color: #000;
+  font-family: 'Roboto Condensed', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 200vmin;
+  overflow: hidden;
+}
+
+.controls {
+  background-color: #272930;
+  color:#FFF;
+  position: fixed;
+  bottom: 0;
+  left: calc(50% - 10em);
+  width: 20em;
+  z-index: 2;
+  text-align: center;
+  color: #989AA4;
+  border-radius: .2em .2em 0 0;
+  
+  h2:after {
+    content: ":";
+  }
+  
+  a {
+    cursor: pointer;
+  }
+  
+  h2, a {
+    padding: .6em .6em;
+    margin: 0;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: bold;
+  }
+}
+
+html.view-top .view-top,
+html.view-side .view-side {
+  background-color: #1E2025;
+  color: #FFF;
+}
+
+.track {
+  height: 100%;
+  background: $trackColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+  padding: 20%;
+  box-shadow: inset 0 0 .4em $trackShadowColor;
+}
+
+.track__infield {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: $baseBg;
+  background-size: 12vmin 12vmin;
+  box-shadow: 0 0 .4em $trackShadowColor;
+}
+
+.base {
+  width: 80vmin;
+  height: 80vmin;
+  background: $baseBg;
+  background-size: 12vmin 12vmin;
+  transform-style: preserve-3d;
+  position: relative;
+  padding: 1em;
+  transition: transform .3s;
+  
+  &:after {
+    transform-origin: 0 0;
+    display: block;
+    background-color: $groundBg;
+    content: "";
+    position: absolute;
+    height: 5vmin;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    transform: rotateX(-90deg);
+    z-index: -1;
+  }
+}
+
+html.view-side .base {
+  transform: rotateX(50deg) translateY(-10%);
+}
+
+#car {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 50% 70%;
+  height: 10%;
+  width: 10%;
+  z-index: 1;
+  
+  &, div {
+    transform-style: preserve-3d;
+  }
+}
+
+.car__base {
+  height: 100%;
+  width: 55%;
+  background-color: $paintColor;
+  position: relative;
+  margin: 0 auto;
+}
+
+.wall-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.wall {
+  background-color: $paintColor;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.wall--1 {
+  background-color: #000;
+  transform-origin: 0 0;
+  transform: rotateX(105deg);
+  height: 1vmin;
+  position: relative;
+}
+
+.wall--2 {
+  transform-origin: 100% 0;
+  transform: rotateY(90deg) skewY(-20deg);
+  width: 1vmin;
+  right: 0;
+  left: auto;
+}
+
+.wall--3 {
+  background-color: #000;
+  transform-origin: 100% 100%;
+  transform: rotateX(-110deg);
+  height: 1vmin;
+  bottom: 0;
+  top: auto;
+}
+
+.wall--4 {
+  transform-origin: 0 100%;
+  transform: rotateY(-90deg) skewY(20deg);
+  width: 1vmin;
+}
+
+.tail-light {
+  background-color: $tailLightColor;
+  
+  height: 100%;
+  width: 20%;
+  float: left;
+  
+  & + .tail-light {
+    float: right;
+  }
+}
+
+.head-light {
+  border-radius: 50%;
+  background-color: $headLightColor;
+  height: 100%;
+  width: 20%;
+  float: left;
+  
+  & + .head-light {
+    float: right;
+  }
+}
+
+.car-top {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  transform: translateZ(1vmin) translateY(.4vmin);
+}
+
+.hood {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 35%;
+  background-color: $paintColor;
+  transform-origin: 0 100%;
+  transform: rotateX(-10deg);
+}
+
+.front-shield {
+  background-color: $windowColor;
+  position: absolute;
+  bottom: 100%;
+  height: 60%;
+  width: 100%;
+  transform: rotateX(-20deg);
+  transform-origin: 50% 100%;
+  
+  &:after {
+    background-color: $windowColor;
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    height: 260%;
+    width: 100%;
+    transform: rotateX(30deg);
+    transform-origin: 50% 100%;
+  }
+}
+
+.roof {
+  background-color: $paintColor;
+  position: absolute;
+  bottom: 100%;
+  height: 118.8%;
+  width: 100%;
+  transform: rotateX(30deg);
+  transform-origin: 50% 100%;
+}
+
+.rear-shield {
+  background-color: $windowColor;
+  position: absolute;
+  bottom: 100%;
+  height: 80%;
+  width: 100%;
+  transform: rotateX(40deg);
+  transform-origin: 50% 100%;
+}
+
+.trunk {
+  background-color: $paintColor;
+  position: absolute;
+  bottom: 100%;
+  height: 80%;
+  width: 100%;
+  transform: rotateX(-20deg);
+  transform-origin: 50% 100%;
+}
+
+.wheel {
+  border-radius: 50%;
+  height: 15%;
+  width: 100%;
+  background-color: #000;
+  transform: skewY(-20deg) translateX(-30%);
+}
+
+.wall--2 .wheel {
+  transform: skewY(20deg) translateX(30%);
+}
+
+.wheel--1 {
+  margin: 100% 0 345%;
+}
+
+
+
+css(function() {
+  function Car (el, x, y, dir) {
+    this.element = el;
+    this.x = x;
+    this.y = y;
+    this.turn = 0;
+    this.dir = dir;
+    this.speed = 0;
+    this.model = {
+      maxSpeed: 6,
+      maxReverseSpeed: -2,
+      acceleration: 0.3,
+      friction: 0.99,
+      turnMax: 1
+    }
+  }
+  
+  Car.prototype.render = function(transformProperty) {
+    var t = 'translateX(' + this.x + '%) translateY(' + this.y + '%)';
+    t += ' rotate(-' + this.dir + 'deg)';
+    t += ' translateZ(.5vmin)';
+    this.element.style[transformProperty] = t;
+  };
+  
+  var state = {
+    keypress: {
+      up: false,
+      right: false,
+      left: false,
+      down: false
+    },
+    car: null,
+    fps: 15,
+    transformProperty: "transform"
+  }
+  
+  function init(carId) {
+    crossBrowserFixes();
+    var carElement = document.getElementById(carId);
+    state.car = new Car(carElement, 470, 795, 90);
+    window.addEventListener("keydown", keyDown, false);
+    window.addEventListener("keyup", keyUp, false);
+    animLoop();
+  }
+  
+  function crossBrowserFixes() {
+    if(!('transform' in document.body.style))
+    {
+      state.transformProperty = "webkitTransform";
+    }
+  }
+
+  function calcMovement() {
+    if(state.keypress.up) {
+      if(state.car.speed === 0) {
+        state.car.speed = 0.1;
+      }
+      
+      if(state.car.speed < state.car.model.maxSpeed) {
+        state.car.speed += state.car.model.acceleration;
+      }
+    } else if(state.keypress.down && state.car.speed > state.car.model.maxReverseSpeed) {
+      state.car.speed -= (state.car.model.acceleration / 2);
+    }
+    
+    if (state.keypress.left) {
+      if(state.car.speed && state.car.turn < state.car.model.turnMax) {
+        state.car.turn += 0.4;
+      }
+    } else if (state.keypress.right) {
+      if(state.car.speed && state.car.turn > -state.car.model.turnMax) {
+        state.car.turn -= 0.4;
+      }
+    }
+    
+    state.car.speed *= state.car.model.friction;
+
+    if(state.car.speed < 0.1 && state.car.speed > -0.1) {
+      state.car.speed = 0;
+    }
+    
+    if(state.car.speed != 0 && state.car.turn != 0) {
+      state.car.dir += state.car.turn * (state.car.speed / state.car.model.maxSpeed);
+      state.car.turn *= 0.7
+      
+      if(state.car.dir < 0) {
+        state.car.dir = (360 - state.car.dir);
+      } else if (state.car.dir > 360) {
+        state.car.dir = 360 - state.car.dir;
+      } 
+    }
+
+    if(state.car.turn < 0.1 && state.car.turn > -0.1) {
+      state.car.turn = 0;
+    }
+    
+    calcPosition();
+  }
+  
+  function calcPosition() {
+    var dirRadian = state.car.dir * (Math.PI/180);
+    state.car.x += state.car.speed * Math.sin(dirRadian);
+    state.car.y += state.car.speed * Math.cos(dirRadian);
+  }
+  
+  function animLoop() {
+    setTimeout(function() {
+      calcMovement();
+      state.car.render(state.transformProperty);
+      requestAnimationFrame(animLoop);
+    }, 100 / state.fps);
+  }
+  
+  function keyUp(e) {
+    move(e, false);
+  }
+
+  function keyDown(e) {
+    move(e, true);
+  }
+  
+  function move(e, isKeyDown) {
+    if(e.keyCode >= 37 && e.keyCode <= 40) {
+      e.preventDefault();
+    }
+    
+    if(e.keyCode === 37) {
+      state.keypress.left = isKeyDown;
+    } 
+    
+    if(e.keyCode === 38) {
+      state.keypress.up = isKeyDown;
+    } 
+    
+    if(e.keyCode === 39) {
+      state.keypress.right = isKeyDown;
+    } 
+    
+    if(e.keyCode === 40) {
+      state.keypress.down = isKeyDown;
+    }
+  }
+  
+  function camera(el) {
+    document.documentElement.setAttribute('class', el.getAttribute('class'));
+  }
+
+  window.drive = {
+		init: init,
+    camera: camera
+	}
+})();
+
+drive.init("car");
+
+
+js
