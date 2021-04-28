@@ -1,0 +1,236 @@
+<html>
+  <head>
+<!--       <script src="../js/bird_fly.js"></script>
+        <link rel="stylesheet" href="../css/bird_fly.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+      
+    <div class="container">
+      <div class="bird"></div>
+      <div id="col1" class="col"></div>
+      <div id="col2" class="col"></div>
+    </div>
+     <p class="score">Score:</p><span></span>
+    <div class="both">
+    <button class="but" onclick="colmove()">Start</button>
+    <button  id="recal" onclick="reload1()">Restart</button>
+    </div>
+   
+  </body>
+  </html>
+  
+  
+  html
+  
+  
+  
+  
+body
+{
+  height:700px;
+  width:700px;
+  
+}
+.over
+{
+    color:red;
+    font-size:50px;
+    position:absolute;
+    top:100px;
+    left:200px;
+}
+.container
+{
+  height:400px;
+  width:90%;
+  background:lightgreen;
+  margin-top:50px;
+  margin-left:50%;
+  position:relative;
+  overflow:hidden;
+  border:2px solid red;  
+}
+.bird
+{
+  height:50px;
+  width:50px;
+  background:url('http://bit.ly/1gKKMsZ');
+  position:absolute;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  top:130px;
+  left:50px;  
+}
+.col
+{
+  position:absolute;
+  height:150px;
+  width:50px;
+  background:red;
+  right:-50px;  
+}
+#col1
+{
+  top:0px;
+}
+#col2
+{
+  bottom:0px;
+}
+.but
+{
+ height:30px;
+ width:70px;
+ border:none;
+ background:red;
+ color:white;
+}
+.both
+{
+    height:70px;
+    width:200px;
+    position:relative;
+    left:615px;
+    top:20px;
+    
+}
+.score
+{
+ position:absolute;
+     top: 80px;
+    left: 1050px;
+    font-size: 30px;
+}
+#recal
+{
+  height:30px;
+ width:90px;
+ border:none;
+ background:green;
+color:white;
+}
+span
+{
+     position:absolute;
+     top: 112px;
+    left: 1145px;
+    font-size: 30px;
+}
+
+
+css
+
+
+
+function colmove()
+{
+ $(".but").hide();
+ var a1=parseInt($(".container").width());
+ var init=parseInt($(".col").css('right')); 
+ var heicol=parseInt($(".col").css('height'));
+ var goup;
+ var to=true;
+ var tot=150;
+ var dow=150;
+ var speed=10;
+ var count1=0;
+ var a=setInterval(function() 
+  {
+      $("h3").hide();
+       $("span").text(count1);
+      var b=parseInt($(".col").css('right'));     
+    if(b>a1)
+      {
+         b=init;
+        var ranhei=parseInt(Math.random()*100);       
+        $("#col1").css('height',heicol+ranhei);
+        $("#col2").css('height',heicol-ranhei);
+        tot=heicol+ranhei;
+        dow=heicol-ranhei; 
+        count1++;
+     speed++;
+     
+      }  
+     if(parseInt($(".bird").css('top'))==360||parseInt($(".bird").css('top'))==0)
+        {
+          touch();
+        }        
+  
+   if((parseInt($(".col").css('left'))<=100&&parseInt($(".col").css('left'))>=50))
+      {      
+         
+    if(tot>=parseInt($(".bird").css('top'))||(parseInt($(".bird").css('top'))==tot))
+    {    
+     
+        touch();
+    }  
+         if(parseInt($("#col2").css('top'))<=parseInt($(".bird").css('top'))+50)
+         {
+            
+           touch()
+         }
+     }
+     $(".col").css('right',b+speed);      
+  },50);
+ 
+ var bi=setInterval(function()
+  {
+   godown()
+ },50);
+
+   
+ $(document).on('keydown',function(e)
+ {
+   var key=e.keyCode;
+   clearInterval(bi);
+   if(key==38&&to==true)
+     {
+       $(".bird").css('top',parseInt($(".bird").css('top'))-10);
+      // goup=setInterval(function(){up1();},50);
+     }  
+       
+ });
+   $(document).on('keyup',function(e)
+ {
+    bi=setInterval(godown,50);
+    
+     var key=e.keyCode;
+       if(key==38)
+        {   
+           clearInterval(goup);
+          
+        }   
+       
+ });
+ function up1()
+ {
+   $(".bird").css('top',parseInt($(".bird").css('top'))-10);
+ }
+ 
+ function godown()
+ {   
+   $(".bird").css('top',parseInt($(".bird").css('top'))+5);
+ }
+function touch()
+  {
+    clearInterval(a);
+    clearInterval(goup);
+    clearInterval(bi);
+    to=false;
+    $(".bird").animate({"top":"360px"},1000);
+    var ove=$("<h3></h3>").addClass("over").text("Game Over...");
+    $(".container").append(ove);
+    $(".col").css("background","white")
+    $(".container").css("background","white")
+    count1=0;
+    $("h3").show();
+  }
+}
+ function reload1()
+  {
+    window.location.reload(true);
+  }
+  
+  
+  js
