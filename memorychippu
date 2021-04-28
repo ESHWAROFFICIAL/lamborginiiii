@@ -1,0 +1,550 @@
+<div id="root"></div>
+
+html
+
+
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(5deg);
+  }
+  40% {
+    transform: rotate(-5deg);
+  }
+  60% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+body {
+  position: relative;
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+.modal__wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 11119;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 420px;
+  height: 300px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px #000;
+}
+
+.modal--top {
+  display: flex;
+  height: 50%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2345;
+  color: #4b4b4b;
+  font-size: 28px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: url("https://image.ibb.co/h3nRnm/Screenshot_2017_11_19_welcome_screen_2x_png_PNG_Image_800_600_pixels.png");
+}
+
+.overlay:before {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #82faff;
+  opacity: 0.5;
+}
+
+.modal--bottom {
+  display: flex;
+  height: 50%;
+  padding: 6%;
+  color: #585a5b;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.modal__btn {
+  height: 45px;
+  width: 110px;
+  border: none;
+  color: #005597;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: right;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: #aaf0ff;
+}
+
+.modal__btn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.area__wrapper {
+  height: 100vh;
+  width: 100vw;
+  background-color: #3ad0fa;
+  background-image: url(http://svgshare.com/i/4U_.svg);
+  background-size: cover;
+  background-position: 50% 0%;
+  background-repeat: no-repeat;
+  padding-top: 6%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.area {
+  width: 400px;
+  height: 400px;
+  list-style: none;
+  margin: 6% 0;
+}
+
+.area__head {
+  color: #3c3c3c;
+}
+
+.tile {
+  width: 20%;
+  height: 20%;
+  margin: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+.tile--front,
+.tile--back {
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0;
+  font-size: 30px;
+  width: 100%;
+  min-height: 100%;
+  text-align: left;
+  backface-visibility: hidden;
+  transform-style: preserve3d;
+  transition: all 0.4s;
+}
+
+.tile--front {
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.tile--back {
+  transform: rotateY(-180deg);
+}
+
+.tile--selected .tile--back {
+  transform: rotateY(0deg);
+}
+
+.tile--selected .tile--front {
+  transform: rotateY(180deg);
+}
+
+.tile--selected.tile--matched .tile--back,
+.tile--selected.tile--matched .tile--front {
+  animation-name: shake;
+  animation-duration: 0.4s;
+}
+
+.area__footer {
+  width: 80%;
+  margin-top: 5%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.area__footer > p {
+  color: #ffffff;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  display: none;
+}
+
+
+
+css
+
+
+
+
+class PlayFooter extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      elapsed: 0
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.gameOver !== this.props.gameOver && nextProps.gameOver) {
+      clearInterval(this.timer);
+
+      this.setState({ elapsed: 0 });
+    }
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState({ elapsed: this.state.elapsed + 1 });
+    }, 1000);
+  }
+
+  render() {
+    return (
+      <div className="area__footer">
+        <p>Turns : {this.props.turns}</p>
+        <p>Time : {this.state.elapsed} sec</p>
+      </div>
+    );
+  }
+}
+
+class Tile extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    if (this.props.status === "unselected") {
+      this.props.onClickListener(this.props.index);
+    } else {
+      console.warn("The tile has already been " + this.props.status);
+    }
+  }
+
+  render() {
+    return (
+      <div
+        onClick={this.handleClick}
+        className={
+          "tile " +
+          (this.props.status === "selected"
+            ? "tile--selected"
+            : this.props.status === "matched"
+              ? "tile--selected tile--matched"
+              : "")
+        }
+      >
+        <div className="tile--front" />
+        <div
+          className="tile--back"
+          style={{ backgroundColor: this.props.accent }}
+        >
+          {this.props.icon}
+        </div>
+      </div>
+    );
+  }
+}
+
+class PlayArea extends React.Component {
+  tiles = [
+    {
+      name: "face-with-tears-of-joy",
+      accent: "#ffcc33",
+      icon: "😂"
+    },
+    {
+      name: "turkey",
+      accent: "rgb(171, 153, 142)",
+      icon: "🦃"
+    },
+    {
+      name: "monkey-face",
+      accent: "rgb(151, 123, 75)",
+      icon: "🐵"
+    },
+    {
+      name: "ear-of-maize",
+      accent: "rgb(138, 181, 115)",
+      icon: "🌽"
+    },
+    {
+      name: "snowman-without-snow",
+      accent: "#ffffff",
+      icon: "⛄"
+    },
+    {
+      name: "beer-mug",
+      accent: "goldenrod",
+      icon: "🍺"
+    },
+    {
+      name: "thinking-face",
+      accent: "yellow",
+      icon: "🤔"
+    },
+    {
+      name: "racing-car",
+      accent: "#DC143C",
+      icon: "🏎️"
+    }
+  ];
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tiles: [],
+      turns: 0,
+      activeTile: null
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+    this.resetPlayArea = this.resetPlayArea.bind(this);
+  }
+
+  shuffleTiles(tiles) {
+    let j, x, i;
+
+    for (i = tiles.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = tiles[i];
+      tiles[i] = tiles[j];
+      tiles[j] = x;
+    }
+
+    return tiles;
+  }
+
+  multiplyTiles(tiles) {
+    return tiles
+      .map(item => {
+        // Use Object.assign to create a new object rather than passing the same reference twice
+        return [item, Object.assign({}, item)];
+      })
+      .reduce((a, b) => {
+        return a.concat(b);
+      });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.gameOver !== this.props.gameOver && !nextProps.gameOver) {
+      const newTiles = this.tiles.map(e => {
+        e.status = "unselected";
+
+        return e;
+      });
+
+      this.setState({
+        tiles: this.shuffleTiles(this.multiplyTiles(newTiles))
+      });
+    }
+  }
+
+  handleClick(index) {
+    // Update turns on every click
+    this.setState({ turns: this.state.turns + 1 });
+
+    const selectedTile = this.state.tiles[index];
+    const updatedTiles = this.state.tiles.slice();
+
+    selectedTile.status = "selected";
+    updatedTiles[index] = selectedTile;
+
+    this.setState({
+      tiles: updatedTiles
+    });
+
+    if (this.state.activeTile === null) {
+      this.setState({
+        activeTile: selectedTile
+      });
+    } else if (selectedTile.name === this.state.activeTile.name) {
+      let matched = 0;
+
+      const updatedTiles = this.state.tiles.map(e => {
+        if (e.name === selectedTile.name) e.status = "matched";
+        if (e.status === "matched") matched++;
+
+        return e;
+      });
+
+      this.setState({
+        tiles: updatedTiles,
+        activeTile: null
+      });
+
+      if (matched === 16) this.resetPlayArea();
+    } else {
+      const _this = this;
+
+      setTimeout(function() {
+        const updatedTiles = _this.state.tiles.map(e => {
+          if (
+            e.name === _this.state.activeTile.name ||
+            e.name === selectedTile.name
+          ) {
+            e.status = "unselected";
+          }
+
+          return e;
+        });
+
+        _this.setState({
+          activeTile: null,
+          tiles: updatedTiles
+        });
+      }, 700);
+    }
+  }
+
+  resetPlayArea() {
+    this.props.onGameOver(this.state.turns);
+
+    this.setState({
+      tiles: [],
+      turns: 0,
+      activeTile: null
+    });
+  }
+
+  render() {
+    let cindex = 0;
+    return (
+      <div className="area__wrapper">
+        <h1 className="area__head">The Memory Games</h1>
+        <ul className="area">
+          {this.state.tiles.map(e => (
+            <Tile
+              index={cindex++}
+              status={e.status}
+              icon={e.icon}
+              accent={e.accent}
+              onClickListener={this.handleClick}
+            />
+          ))}
+        </ul>
+        {!this.props.gameOver ? (
+          <PlayFooter turns={this.state.turns} gameOver={this.props.gameOver} />
+        ) : null}
+      </div>
+    );
+  }
+}
+
+class PlayModal extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={this.props.gameOver ? "modal__wrapper" : "hidden"}>
+        <div className="modal">
+          <div className="modal--top overlay">
+            <p>
+              <b>High Score</b> : {this.props.highScore} pts
+            </p>
+          </div>
+          <div className="modal--bottom">
+            <p>
+              Hey there, You think you’ve got a sharp memory? Let’s see how far
+              you can go.
+            </p>
+            <button className="modal__btn" onClick={this.props.onPlayClick}>
+              Play
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      score: 0,
+      gameOver: true
+    };
+
+    this.initCards = this.initCards.bind(this);
+    this.restartGame = this.restartGame.bind(this);
+  }
+
+  initCards() {
+    this.setState({
+      score: 0,
+      gameOver: false
+    });
+  }
+
+  restartGame(turns) {
+    const score = Math.round(120 / turns * 100);
+
+    this.setState({
+      score: score,
+      gameOver: true
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <PlayModal
+          gameOver={this.state.gameOver}
+          highScore={this.state.score}
+          onPlayClick={this.initCards}
+        />
+        <PlayArea
+          gameOver={this.state.gameOver}
+          onGameOver={this.restartGame}
+        />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+
+
+
+js
