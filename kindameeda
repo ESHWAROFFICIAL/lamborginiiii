@@ -1,0 +1,179 @@
+<div class="container">
+  <p class="draggable" draggable="true">1</p>
+  <p class="draggable" draggable="true">2</p>
+</div>
+<div class="container">
+  <p class="draggable" draggable="true">3</p>
+  <p class="draggable" draggable="true">4</p>
+</div>
+
+      
+     
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+<!-- Side Links Only -->
+<div class="side-links">
+  <a href="https://youtu.be/jfYWwQrtzzY" target="_blank" class="side-link side-link-youtube">
+    <i class="fab fa-youtube-square side-link-icon"></i>
+    <span class="side-link-text">View Tutorial</span>
+  </a>
+  <a href="https://github.com/WebDevSimplified" target="_blank" class="side-link side-link-github side-link-icon">
+    <i class="fab fa-github-square"></i>
+    <span class="side-link-text">View GitHub</span>
+  </a>
+  <a href="https://twitter.com/DevSimplified" target="_blank" class="side-link side-link-twitter">
+    <i class="fab fa-twitter-square side-link-icon"></i>
+    <span class="side-link-text">View Twitter</span>
+  </a>
+</div>
+
+
+
+
+html
+
+
+
+
+body {
+  margin: 0;
+}
+
+.container {
+  background-color: #333;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.draggable {
+  padding: 1rem;
+  background-color: white;
+  border: 1px solid black;
+  cursor: move;
+}
+
+.draggable.dragging {
+  opacity: .5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Background Styles Only */
+
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+* {
+    font-family: Raleway;
+}
+
+.side-links {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 10px;
+  color: white;
+  width: 180px;
+  padding: 10px 0;
+  border-radius: 10px;
+}
+
+.side-link-youtube {
+  background-color: red;
+}
+
+.side-link-twitter {
+  background-color: #1DA1F2;
+}
+
+.side-link-github {
+  background-color: #6e5494;
+}
+
+.side-link-text {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.side-link-icon {
+  color: white;
+  font-size: 30px;
+}
+
+
+
+css
+
+
+
+
+
+const draggables = document.querySelectorAll('.draggable')
+const containers = document.querySelectorAll('.container')
+
+draggables.forEach(draggable => {
+  draggable.addEventListener('dragstart', () => {
+    draggable.classList.add('dragging')
+  })
+
+  draggable.addEventListener('dragend', () => {
+    draggable.classList.remove('dragging')
+  })
+})
+
+containers.forEach(container => {
+  container.addEventListener('dragover', e => {
+    e.preventDefault()
+    const afterElement = getDragAfterElement(container, e.clientY)
+    const draggable = document.querySelector('.dragging')
+    if (afterElement == null) {
+      container.appendChild(draggable)
+    } else {
+      container.insertBefore(draggable, afterElement)
+    }
+  })
+})
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.draggable:not(.dragging)')]
+
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect()
+    const offset = y - box.top - box.height / 2
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child }
+    } else {
+      return closest
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element
+}
+
+
+
+
+js
