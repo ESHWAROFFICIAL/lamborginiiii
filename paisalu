@@ -1,0 +1,286 @@
+<div class="cointainer"></div>
+<section>
+  <p>Try with sound !</p>
+  <button>!</button>
+ 
+ 
+ 
+ html
+ 
+ 
+ 
+ @import url('https://fonts.googleapis.com/css?family=Frijole');
+
+section {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #282428;
+}
+
+p{
+  margin: 30px 0;
+  color: rgba(240,200,180,0.3);
+  text-transform: uppercase;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+}
+a{
+  text-decoration: none;
+  font-weight: 600;
+  
+  color: rgba(255,100,180,0.4);
+  &:hover{
+    color: rgba(255,100,180,0.6)
+  }
+}
+
+button{
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  border-radius: 8px;
+  background-color: #c8ac4d;
+  border: none;
+  font-size: 50px;
+  font-family: 'Frijole', cursive;
+  color: #fff;
+  text-shadow: -2px 4px 0 rgba(0,0,0,1);
+  box-shadow: 
+    inset -2px 4px 0 0px rgba(255,255,255,1),
+    -2px 4px 0 2px rgba(0,0,0,1);
+  outline: none;
+  cursor: pointer;
+  &:active{
+    box-shadow: 
+      inset -1px 2px 0 0px rgba(255,255,255,1),
+      -1px 2px 0 2px rgba(0,0,0,1);
+    transform: translate(0, 3px);
+  }
+};
+
+.cointainer{
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+.coin {
+  opacity: 0;
+  top: 0;
+  position: absolute;
+  pointer-events: none;
+  display: inline-block;
+  .sprite{
+    content: '';
+    transition: all .7s linear;
+    width: 64px;
+    height: 64px;
+    display:block;
+    overflow: hidden;
+    background:  url('https://i.imgsafe.org/748658b929.png') 0 0 no-repeat;
+    background-size: 512px 64px;
+    image-rendering: pixelated;
+  }
+}
+
+.jump{
+  opacity: 1;
+  animation: vertical 0.7s forwards;
+}
+
+@keyframes vertical {
+  0% { 
+    animation-timing-function: ease-out;
+    transform: translate(0,0)
+  }
+  30% { 
+    animation-timing-function: cubic-bezier(1, 0.01, 1, 1);
+    transform: translate(0, -100px)
+  }
+  100% { transform: translate(0, 1000px)}
+}
+@keyframes rotate {
+    from { background-position: 0px; }
+    to { background-position: -512px; }
+}
+
+
+
+css less
+
+
+
+
+
+
+var coinPool;
+var sounds = [];
+var ctx, masterGain;
+
+function init() {
+  var buttons = document.querySelectorAll('button')
+  initWebAudio()
+  coinPool = createCoinPool(1000)
+  buttons.forEach(b => {
+    b.addEventListener('click', e => {
+      animateCoins(e.clientX, e.clientY)
+    })
+  })
+}
+
+function animateCoin(x,y) {
+  var coin = coinPool.getCoin()
+  var sprite = coin.querySelector('.sprite')
+  // tweak around this to offset how much to the side coins should flip
+  var randomX = Math.random()*600 - 300
+  
+  // tweak this to change how fast coins should spin
+  sprite.style.animation = `rotate ${1-Math.random()*0.6}s steps(8, end) infinite`
+  sprite.style.transform = `translateX(${randomX}px)`
+  coin.style.top = (y-64)+'px'
+  coin.style.left = (x-32)+'px'
+  coin.classList.add('jump');
+  playCoinSound()
+  setTimeout(()=>{
+    coin.classList.remove('jump')
+    sprite.style.animation = 'none'
+    sprite.style.transform = 'none'
+  },1000)
+}
+
+function animateCoins(x,y) {
+  // tweak this to change amount of coins which should be spawned
+  // is fairly performant even with large amount of coins 
+  // (increase coinPool for values > 100 coins)
+  var numCoins = Math.ceil(Math.random()*9)
+  for(var i=0;i<numCoins;i++){
+    // change time offset of the coins
+    var time = (1.5-Math.random())*i*100
+    setTimeout(()=>{
+      animateCoin(x,y)
+    }, time);
+  }
+}
+
+// creates a pool of coins and appends them to the cointainer class element
+function createCoinPool(numCoins) {
+  let cointainer = document.querySelector('.cointainer')
+  let pool = []
+  for (let i = 0; i < numCoins; i++) {
+    let coin = document.createElement('div')
+    let sprite = document.createElement('div')
+    sprite.classList.add('sprite')
+    coin.classList.add('coin')
+    coin.appendChild(sprite)
+    cointainer.appendChild(coin)
+    pool.push(coin)
+  }
+  var currentCoin = 0;
+  function getCoin() {
+    var coin = pool[currentCoin]
+    currentCoin = (currentCoin + 1)%numCoins
+    return coin
+  }
+  pool.getCoin = getCoin
+  return pool
+}
+
+function initWebAudio() {
+  var Context = window.AudioContext || window.webkitAudioContext || window.MozAudioContext || window.mozAudioContext
+  if(Context) {
+    ctx = new Context()
+    masterGain = ctx.createGain()
+    // decreased volume, so people's ears don't bleed
+    masterGain.gain.value = 0.3
+    masterGain.connect(ctx.destination)
+    new BufferLoader(ctx, soundUrls, (buffer) => {
+      sounds = buffer
+      console.log('Sounds loaded')
+    }).load()
+  }
+}
+
+function playCoinSound() {
+  if (sounds && sounds.length > 0) {
+    var randomSound = Math.floor(Math.random() * sounds.length)
+    
+    var bufferSource = ctx.createBufferSource()
+    bufferSource.buffer = sounds[randomSound]
+    bufferSource.connect(masterGain)
+    // tweak the number to change playbackrate (which also chagnes pitch)
+    bufferSource.playbackRate.value = 0.5 + 0.7 * Math.random()
+    bufferSource.start(ctx.currentTime)
+  }
+}
+
+/** Code related to loading sounds **/
+var soundUrls = [
+  'https://raw.githubusercontent.com/JustGoscha/binaural-webaudio/master/assets/coin1.mp3',
+  'https://raw.githubusercontent.com/JustGoscha/binaural-webaudio/master/assets/coin2.mp3',
+  'https://raw.githubusercontent.com/JustGoscha/binaural-webaudio/master/assets/coin3.mp3',
+  'https://raw.githubusercontent.com/JustGoscha/binaural-webaudio/master/assets/coin4.mp3',
+  'https://raw.githubusercontent.com/JustGoscha/binaural-webaudio/master/assets/coin5.mp3'
+]
+
+
+// BufferLoader, used to load sounds
+function BufferLoader(context, urlList, callback) {
+  this.context = context;
+  this.urlList = urlList;
+  this.onload = callback;
+  this.bufferList = new Array();
+  this.loadCount = 0;
+}
+
+BufferLoader.prototype.loadBuffer = function(url, index) {
+  // Load buffer asynchronously
+  var request = new XMLHttpRequest();
+  request.open("GET", url, true);
+  request.responseType = "arraybuffer";
+
+  var loader = this;
+
+  request.onload = function() {
+    // Asynchronously decode the audio file data in request.response
+    loader.context.decodeAudioData(
+      request.response,
+      function(buffer) {
+        if (!buffer) {
+          alert('error decoding file data: ' + url);
+          return;
+        }
+        loader.bufferList[index] = buffer;
+        if (++loader.loadCount == loader.urlList.length)
+          loader.onload(loader.bufferList);
+      },
+      function(error) {
+        console.error('decodeAudioData error', error);
+      }
+    );
+  }
+
+  request.onerror = function() {
+    alert('BufferLoader: XHR error');
+  }
+
+  request.send();
+}
+
+BufferLoader.prototype.load = function() {
+  for (var i = 0; i < this.urlList.length; ++i)
+  this.loadBuffer(this.urlList[i], i);
+}
+
+// kickoff everything
+init();
+
+
+
+js
